@@ -1,6 +1,7 @@
 // const http = require('http');
 const path = require('path');
 const express = require('express');
+const expressHbs = require('express-handlebars');
 
 const adminRoutes = require('../routes/admin');
 const shopRoutes = require('../routes/shop');
@@ -10,6 +11,11 @@ const bodyParser = require('body-parser');
 const rootDir = require('../util/path');
 
 const app = express();
+
+app.engine('hbs', expressHbs.engine({ extname: 'hbs', defaultLayout: '', layoutsDir: 'NodeJS Basics/views/layouts/' }));
+app.set('view engine', 'hbs');
+//app.set('view engine', 'pug');
+app.set('views', path.join(rootDir, '..', 'views')); 
 
 app.use((req, res, next) => {
     console.log('First Middleware!');
@@ -32,11 +38,11 @@ app.use('/', (req, res, next) => {
 });
 
 app.use(shopRoutes);
-app.use('/admin', adminRoutes); // Parent route like @RequestMapping on Controller
+app.use('/admin', adminRoutes.routes); // Parent route like @RequestMapping on Controller
 
 // ../ is equal to ..
 app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(rootDir, '..', 'views', '404.html'));
+    res.status(404).render('404' , {pageTitle : 'Page Not Found'})
 }) 
 
 // Express internally does it for us.
