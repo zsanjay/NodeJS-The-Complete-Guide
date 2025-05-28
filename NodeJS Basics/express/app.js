@@ -12,9 +12,17 @@ const rootDir = require('../util/path');
 
 const app = express();
 
-app.engine('hbs', expressHbs.engine({ extname: 'hbs', defaultLayout: '', layoutsDir: 'NodeJS Basics/views/layouts/' }));
-app.set('view engine', 'hbs');
+// app.engine('hbs', expressHbs.engine({
+//      extname: 'hbs',
+//      defaultLayout: 'main-layout',
+//      layoutsDir: 'NodeJS Basics/views/layouts/'
+//      }));
+     
+//app.set('view engine', 'hbs');
 //app.set('view engine', 'pug');
+
+app.set('view engine', 'ejs');
+
 app.set('views', path.join(rootDir, '..', 'views')); 
 
 app.use((req, res, next) => {

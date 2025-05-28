@@ -11,22 +11,12 @@
 </head>
 
 <body>
-    <header class="main-header">
-        <nav class="main-header__nav">
-            <ul class="main-header__item-list">
-                <li class="main-header__item"><a href="/">Shop</a></li>
-                <li class="main-header__item"><a class="active" href="/admin/add-product">{{ pageTitle }}</a></li>
-            </ul>
-        </nav>
-    </header>
-
     <main>
         <form class="product-form" action="/admin/add-product" method="POST">
             <div class="form-control">
                 <label for="title">Title</label>
                 <input type="text" name="title" id="title">
             </div>
-
             <button type="submit">{{ pageTitle }}</button>
         </form>
     </main>
