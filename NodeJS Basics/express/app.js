@@ -7,6 +7,7 @@ const adminRoutes = require('../routes/admin');
 const shopRoutes = require('../routes/shop');
 
 const bodyParser = require('body-parser');
+const errorController = require('../controllers/error');
 
 const rootDir = require('../util/path');
 
@@ -26,12 +27,12 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(rootDir, '..', 'views')); 
 
 app.use((req, res, next) => {
-    console.log('First Middleware!');
+    //console.log('First Middleware!');
     next(); 
 });
 
 app.use((req, res, next) => {
-    console.log('This always runs!');
+    //console.log('This always runs!');
     //res.send('<h1>Hello from Express!</h1>');
     next();
 });
@@ -46,12 +47,10 @@ app.use('/', (req, res, next) => {
 });
 
 app.use(shopRoutes);
-app.use('/admin', adminRoutes.routes); // Parent route like @RequestMapping on Controller
+app.use('/admin', adminRoutes); // Parent route like @RequestMapping on Controller
 
 // ../ is equal to ..
-app.use((req, res, next) => {
-    res.status(404).render('404' , {pageTitle : 'Page Not Found'})
-}) 
+app.use(errorController.get404); 
 
 // Express internally does it for us.
 
