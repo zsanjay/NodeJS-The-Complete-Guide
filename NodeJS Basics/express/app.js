@@ -11,6 +11,10 @@ const errorController = require('../controllers/error');
 
 const rootDir = require('../util/path');
 
+const db = require('../util/database');
+
+//console.log("rows =" + rows);
+
 const app = express();
 
 // app.engine('hbs', expressHbs.engine({

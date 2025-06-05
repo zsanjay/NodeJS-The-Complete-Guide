@@ -1,21 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-const rootDir = require('../util/path');
-
 const Cart = require('./cart');
-
-const productFilePath = path.join(rootDir, '..', 'data', 'products.json');
-
-
-
-const getProductsFromFile = cb => {
-    fs.readFile(productFilePath, (err, fileContent) => {
-        if (err) {
-            cb([]);
-        }
-        cb(JSON.parse(fileContent));
-    });
-}
+const db = require('../util/database');
 
 module.exports = class Product {
     
@@ -28,44 +12,21 @@ module.exports = class Product {
     }
 
     save() {
-        getProductsFromFile(products => {
-            if (this.id) {
-                const existingProductIndex = products.findIndex(prod => prod.id === this.id);
-                const updatedProducts = [...products];
-                updatedProducts[existingProductIndex] = this;
-                fs.writeFile(productFilePath, JSON.stringify(updatedProducts), (err) => {
-                    console.log(err);
-                });
-            } else {
-                this.id = Math.random().toString();
-                products.push(this);
-                fs.writeFile(productFilePath, JSON.stringify(products), (err) => {
-                    console.log(err);
-                });
-            }
-        });
+        return db.query(
+            'INSERT INTO "node-complete".products (title, price, imageurl, description) VALUES ($1, $2, $3, $4)',
+            [this.title , this.price, this.imageUrl, this.description]
+        );
     }
 
     static deleteById(id) {
-        getProductsFromFile(products => {
-            const product = products.find(prod => prod.id === id);
-            const updatedProducts = products.filter(product => product.id !== id)
-            fs.writeFile(productFilePath, JSON.stringify(updatedProducts), (err) => {
-                if(!err) {
-                    Cart.deleteProduct(id, product.price);
-                }
-            });
-        });
+        return db.query('DELETE FROM "node-complete".products WHERE id = $1',[id]);
     }
 
-    static fetchAll(callbackFn) {
-        getProductsFromFile(callbackFn);
+    static fetchAll() {
+       return db.query('SELECT * FROM "node-complete".products');
     }
 
-    static findById(id, cb) {
-      getProductsFromFile(products => {
-        const product = products.find(p => p.id === id);
-        cb(product);
-      });
+    static findById(id) {
+        return db.query('SELECT * FROM "node-complete".products WHERE id = $1',[id]);
     }
 }
