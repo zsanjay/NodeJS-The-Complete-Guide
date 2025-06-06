@@ -1,71 +1,27 @@
-const fs = require('fs');
-const path = require('path');
-const rootDir = require('../util/path');
+const { DataTypes } = require('sequelize');
 
-const Cart = require('./cart');
+const sequelize = require('../util/database');
 
-const productFilePath = path.join(rootDir, '..', 'data', 'products.json');
-
-
-
-const getProductsFromFile = cb => {
-    fs.readFile(productFilePath, (err, fileContent) => {
-        if (err) {
-            cb([]);
-        }
-        cb(JSON.parse(fileContent));
-    });
-}
-
-module.exports = class Product {
-    
-    constructor(id, title, imageUrl, description, price) {
-        this.id = id;
-        this.title = title;
-        this.imageUrl = imageUrl;
-        this.description = description;
-        this.price = price;
+const Product = sequelize.define('product', {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+    },
+    title: DataTypes.STRING,
+    price: {
+        type: DataTypes.DOUBLE,
+        allowNull: false
+    },
+    imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    description: {
+        type: DataTypes.STRING,
+        allowNull: false,
     }
+});
 
-    save() {
-        getProductsFromFile(products => {
-            if (this.id) {
-                const existingProductIndex = products.findIndex(prod => prod.id === this.id);
-                const updatedProducts = [...products];
-                updatedProducts[existingProductIndex] = this;
-                fs.writeFile(productFilePath, JSON.stringify(updatedProducts), (err) => {
-                    console.log(err);
-                });
-            } else {
-                this.id = Math.random().toString();
-                products.push(this);
-                fs.writeFile(productFilePath, JSON.stringify(products), (err) => {
-                    console.log(err);
-                });
-            }
-        });
-    }
-
-    static deleteById(id) {
-        getProductsFromFile(products => {
-            const product = products.find(prod => prod.id === id);
-            const updatedProducts = products.filter(product => product.id !== id)
-            fs.writeFile(productFilePath, JSON.stringify(updatedProducts), (err) => {
-                if(!err) {
-                    Cart.deleteProduct(id, product.price);
-                }
-            });
-        });
-    }
-
-    static fetchAll(callbackFn) {
-        getProductsFromFile(callbackFn);
-    }
-
-    static findById(id, cb) {
-      getProductsFromFile(products => {
-        const product = products.find(p => p.id === id);
-        cb(product);
-      });
-    }
-}
+module.exports = Product;
