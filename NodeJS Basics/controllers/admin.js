@@ -39,7 +39,7 @@ exports.getEditProduct = (req, res, next) => {
             pageTitle : 'Edit Product',
             path : '/admin/add-product',
             editing : editMode,
-            product : product
+            product : product[0]
         });
     });
 };
