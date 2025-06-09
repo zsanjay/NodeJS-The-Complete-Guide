@@ -8,7 +8,8 @@ exports.getAddProduct = (req, res, next) => {
         activeAddProduct : true,
         formsCSS: true,
         productCSS: true,
-        editing : false
+        editing : false,
+        isAuthenticated : req.session.isLoggedIn
     });
 };
 
@@ -39,7 +40,8 @@ exports.getEditProduct = (req, res, next) => {
             pageTitle : 'Edit Product',
             path : '/admin/add-product',
             editing : editMode,
-            product : product[0]
+            product : product[0],
+            isAuthenticated : req.session.isLoggedIn
         });
     });
 };
@@ -88,7 +90,8 @@ exports.getProducts = (req, res, next) => {
             path: '/admin/products',
             hasProducts: products && products.length > 0,
             activeShop: true,
-            productCSS: true
+            productCSS: true,
+            isAuthenticated : req.session.isLoggedIn
         });
     });
 }
