@@ -5,65 +5,51 @@ const expressHbs = require('express-handlebars');
 
 const adminRoutes = require('../routes/admin');
 const shopRoutes = require('../routes/shop');
+const authRoutes = require('../routes/auth');
+
+const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const bodyParser = require('body-parser');
 const errorController = require('../controllers/error');
-const sequelize = require('../util/database');
-const Product = require('../models/product');
 const User = require('../models/user');
-const Cart = require('../models/cart');
-const CartItem = require('../models/cart-item');
-const Order = require('../models/order');
-const OrderItem = require('../models/order-item');
-
 
 const rootDir = require('../util/path');
 
+const MONGODB_URI = 'mongodb://localhost:27017/shop?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000';
+
 const app = express();
-
-// app.engine('hbs', expressHbs.engine({
-//      extname: 'hbs',
-//      defaultLayout: 'main-layout',
-//      layoutsDir: 'NodeJS Basics/views/layouts/'
-//      }));
-
-//app.set('view engine', 'hbs');
-//app.set('view engine', 'pug');
+const store = new MongoDBStore({
+    uri : MONGODB_URI,
+    collection : 'sessions'
+});
 
 app.set('view engine', 'ejs');
 
 app.set('views', path.join(rootDir, '..', 'views'));
 
-app.use((req, res, next) => {
-    //console.log('First Middleware!');
-    next();
-});
-
-app.use((req, res, next) => {
-    //console.log('This always runs!');
-    //res.send('<h1>Hello from Express!</h1>');
-    next();
-});
 
 // it will parse the request body
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootDir, '..', 'public'))); // To access the static files like css.
+app.use(session({secret : 'my secret', resave: false, saveUninitialized: false, store : store}));
 
 app.use((req, res, next) => {
-    User.findByPk(1)
-    .then(user => {
+    if(!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
+      .then(user => {
         req.user = user;
         next();
     })
-    .catch(err => console.log(err));
+      .catch(err => console.log(err));
 });
 
-app.use('/', (req, res, next) => {
-    console.log('This always runs!');
-    next(); // Allows the request to continue to the next middleware in line
-});
 
 app.use(shopRoutes);
+app.use(authRoutes);
 app.use('/admin', adminRoutes); // Parent route like @RequestMapping on Controller
 
 // ../ is equal to ..
@@ -74,32 +60,24 @@ app.use(errorController.get404);
 // const server = http.createServer(app);
 // server.listen(3000);
 
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-User.hasMany(Product);
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through : CartItem});
-Product.belongsToMany(Cart, { through : CartItem});
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through : OrderItem });
-
-
-//sequelize.sync({ force : true}); // DROP and CREATE TABLES
-sequelize.sync().then(result => {
-    return User.findByPk(1);
-})
-    .then(user => {
-        if (!user) {
-            return User.create({ name: 'Max', email: 'test@test.com' });
+mongoose.connect(
+    MONGODB_URI
+).then(result => {
+    User.findOne().then(user => {
+        if(!user) {
+            const user = new User({
+                name: 'Sanjay',
+                email: 'sanjay@test.com',
+                cart: {
+                    items: []
+                }
+            });
+            user.save();
         }
-        return user;
-    }).then(user => {
-        return user.createCart();
-    })
-    .then(cart => {
-        app.listen(3000);
-    })
-    .catch(err => {
-        console.log(err);
     });
+    console.log("Connected!");
+    app.listen(3000);
+}).catch(err => {
+    console.log(err);
+}); 
+
