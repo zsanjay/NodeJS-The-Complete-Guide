@@ -2,10 +2,10 @@
   "name": "node-first-app",
   "version": "1.0.0",
   "description": "Node First App Example",
-  "main": "NodeJS Basics/express/app.js",
+  "main": "NodeJS The Complete Guide/express/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon NodeJS Basics/express/app.js",
+    "start": "nodemon NodeJS The Complete Guide/express/app.js",
     "start-server": "node first-app.js"
   },
   "repository": {
@@ -28,6 +28,7 @@
     "express": "^5.1.0",
     "express-handlebars": "^8.0.2",
     "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
     "mongoose": "^8.15.1",
     "pug": "^3.0.3"
   }
