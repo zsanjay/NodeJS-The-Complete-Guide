@@ -8,8 +8,7 @@ exports.getAddProduct = (req, res, next) => {
         activeAddProduct : true,
         formsCSS: true,
         productCSS: true,
-        editing : false,
-        isAuthenticated : req.session.isLoggedIn
+        editing : false
     });
 };
 
@@ -32,7 +31,8 @@ exports.getEditProduct = (req, res, next) => {
        return res.redirect('/');
     }
     const prodId = req.params.productId;
-    Product.findById(prodId).then(product => {
+    Product.findById(prodId)
+    .then(product => {
         if(!product) {
            return res.redirect('/');
         }
@@ -40,15 +40,14 @@ exports.getEditProduct = (req, res, next) => {
             pageTitle : 'Edit Product',
             path : '/admin/add-product',
             editing : editMode,
-            product : product[0],
-            isAuthenticated : req.session.isLoggedIn
+            product : product
         });
     });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.findByIdAndDelete(prodId)
+    Product.deleteOne({ _id : prodId, userId: req.user._id})
     .then(() => {
         console.log('DESTROYED PRODUCT');
         res.redirect('/admin/products');
@@ -64,34 +63,36 @@ exports.postEditProduct = (req, res, next) => {
     const updatedImageUrl = req.body.imageUrl;
     const updatedDesc = req.body.description;
 
-    Product.findById(prodId).then(product => {
+    Product.findById(prodId)
+    .then(product => {
+        if(product.userId.toString() !== req.user._id.toString()) {
+            return res.redirect('/');
+        }
         product.title = updatedTitle;
         product.price = updatedPrice;
         product.description = updatedDesc;
         product.imageUrl = updatedImageUrl;
-        return product.save();
-    })
-    .then(result => {
-        console.log("UPDATED PRODUCT!");
-        res.redirect('/admin/products');
+        return product.save()
+        .then(result => {
+            console.log("UPDATED PRODUCT!");
+            res.redirect('/admin/products');
+        });
     })
     .catch(err => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-    Product.find()
+    Product.find({ userId: req.user._id })
     // .select('title price -_id')
     // .populate('userId', 'name')
     .then(products => {
-        console.log(products);
         res.render('admin/products', {
             prods: products,
             pageTitle: 'Admin Products',
             path: '/admin/products',
             hasProducts: products && products.length > 0,
             activeShop: true,
-            productCSS: true,
-            isAuthenticated : req.session.isLoggedIn
+            productCSS: true
         });
     });
 }
