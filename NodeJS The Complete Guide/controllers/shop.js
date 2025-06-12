@@ -34,7 +34,11 @@ exports.getCart = (req, res, next) => {
       products : products
     });
   })
-  .catch(err => console.log(err));
+  .catch(err => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);  
+});
 };
 
  const populateCartItems =  async (req) => {
@@ -62,7 +66,11 @@ exports.getOrders = (req, res, next) => {
       orders: orders
     });
   })
-  .catch(err => console.log(err));
+  .catch(err => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);  
+});
 };
 
 exports.getCheckout = (req, res, next) => {
@@ -91,7 +99,11 @@ exports.postCartDeleteProduct = (req, res, next) => {
     .then(result => {
       res.redirect('/cart');
     }) 
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);  
+  });
 };
 
 exports.postOrder = (req, res, next) => {
@@ -114,5 +126,9 @@ exports.postOrder = (req, res, next) => {
   }).then(() => {
     res.redirect('/orders');
   })
-    .catch(err => console.log(err));
+  .catch(err => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);  
+});
 };
