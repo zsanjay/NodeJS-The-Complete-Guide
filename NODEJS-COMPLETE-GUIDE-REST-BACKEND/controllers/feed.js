@@ -25,6 +25,11 @@ exports.getPosts = async (req, res, next) => {
 };
 
 exports.createPost = async (req, res, next) => {
+  if(!req.isAuth) {
+    const error = new Error('Not authenticated.');
+    error.statusCode = 401;
+    throw error;
+  }
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
