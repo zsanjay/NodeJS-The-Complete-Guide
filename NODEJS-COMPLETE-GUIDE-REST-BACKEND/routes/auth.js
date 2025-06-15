@@ -17,8 +17,7 @@ router.put('/signup', [
                     Promise.reject('Email address is already exists!');
                 }
             });
-        })
-        .normalizeEmail(),
+        }),
     body('password').trim().isLength({ min: 5 }),
     body('name').trim().not().isEmpty()
 ], authController.signup);
