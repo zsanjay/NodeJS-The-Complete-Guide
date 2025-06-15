@@ -5,6 +5,10 @@ This project demonstrates the foundational concepts of Node.js including the nat
 
 ---
 
+Node version frontend - v10.24.1
+Node version backend - v16.20.0
+
+
 ## 📚 Topics Covered
 
 ### ✅ 1. Node.js Core Concepts
