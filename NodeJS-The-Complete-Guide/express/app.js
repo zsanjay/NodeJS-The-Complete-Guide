@@ -3,6 +3,7 @@ const path = require('path');
 const express = require('express');
 const expressHbs = require('express-handlebars');
 const fs = require('fs');
+const https = require('https');
 
 const adminRoutes = require('../routes/admin');
 const shopRoutes = require('../routes/shop');
@@ -14,6 +15,9 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
 
 const bodyParser = require('body-parser');
 const errorController = require('../controllers/error');
@@ -21,7 +25,9 @@ const User = require('../models/user');
 
 const rootDir = require('../util/path');
 
-const MONGODB_URI = 'mongodb://localhost:27017/shop?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000';
+const MONGODB_URI = `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000`;
+
+console.log("MONGODB_URI " + MONGODB_URI);
 
 const app = express();
 const store = new MongoDBStore({
@@ -31,6 +37,11 @@ const store = new MongoDBStore({
 
 const csrfProtection = csrf();
 
+//const certDir = path.join(rootDir);
+
+const privateKey = fs.readFileSync('server.key');
+const certificate = fs.readFileSync('server.cert');
+
 const imageDir = path.join(rootDir, '..', 'images');
 if (!fs.existsSync(imageDir)) {
   fs.mkdirSync(imageDir);
@@ -38,7 +49,6 @@ if (!fs.existsSync(imageDir)) {
 
 const fileStorage = multer.diskStorage({
     destination : (req, file, cb) => {
-        console.log("imageDir = ", imageDir);
         cb(null, imageDir);
     },
     filename: (req, file, cb) => {
@@ -59,6 +69,14 @@ const fileFilter = (req, file, cb) => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(rootDir, '..', 'views'));
 
+const accessLogStream = fs.createWriteStream(
+    path.join(rootDir, 'access.log'),
+    { flags : 'a'}
+);
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined', { stream : accessLogStream }));
 // it will parse the request body
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter}).single('image'));
@@ -122,8 +140,11 @@ mongoose.connect(
     MONGODB_URI
 ).then(result => {
     console.log("Connected!");
-    app.listen(3000);
-}).catch(err => {
+    app.listen(process.env.PORT || 3000);
+    // https.createServer({ key : privateKey, cert : certificate}, app)
+    // .listen(process.env.PORT || 3000);
+})
+.catch(err => {
     console.log(err);
 }); 
 

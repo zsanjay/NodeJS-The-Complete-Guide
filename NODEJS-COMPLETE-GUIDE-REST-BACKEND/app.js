@@ -9,7 +9,9 @@ const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/status');
 
-const MONGODB_URI = 'mongodb://localhost:27017/feed?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000';
+console.log(process.env.NODE_ENV);
+
+const MONGODB_URI =  `mongodb://${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&loadBalanced=false&serverSelectionTimeoutMS=5000&connectTimeoutMS=10000`;
 
 const app = express();
 
@@ -65,7 +67,7 @@ mongoose.connect(
     MONGODB_URI
 ).then(result => {
     console.log("Connected!");
-    app.listen(8080);
+    app.listen(process.env.PORT);
 }).catch(err => {
     console.log(err);
 }); 
