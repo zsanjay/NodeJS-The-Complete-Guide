@@ -175,8 +175,10 @@ app.use((err, req, res, next) => {
 
 Sanjay Mehta
 
-LinkedIn
-GitHub
+<ul>
+  <li>[LinkedIn](https://www.linkedin.com/in/zsanjay/)</li>
+  <li>[GitHub](https://github.com/zsanjay)</li>
+</ul>
 
 ---
 
