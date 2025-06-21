@@ -1,5 +1,5 @@
 
-# Node.js - The Complete Guide
+# 🚀 Node.js - The Complete Guide
 
 A comprehensive Node.js project repository built while following **"Node.js - The Complete Guide"** course. This repository covers everything from basic server setup to building scalable, real-world Node.js applications with Express, MongoDB, authentication, file uploads, REST APIs, GraphQL, deployment, and more.
 
@@ -151,18 +151,17 @@ app.use((err, req, res, next) => {
 
 ---
 
-🌐 Technologies Used
+🌐 Tech Stack
 
 Node.js
 Express.js
 MongoDB & Mongoose
-Pug, EJS, Handlebars
 Socket.io
 Stripe API
 GraphQL
-JWT & bcrypt
-Postman
-Heroku / Render / Vercel
+Templating Engines: Pug, EJS, Handlebars
+Authentication: Sessions, Cookies, JWT & bcrypt
+Deployment: Heroku / Render / Vercel
 
 ---
 
