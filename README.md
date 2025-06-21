@@ -184,5 +184,5 @@ Sanjay Mehta
 
 🙌 Acknowledgements
 
-Based on the course Node.js - The Complete Guide (MVC, REST APIs, GraphQL, Deno) by Academind / Maximilian Schwarzmüller.
+Special thanks to [Academind](https://academind.com/) and [Maximilian Schwarzmüller](https://www.udemy.com/course/nodejs-the-complete-guide/) for the phenomenal course structure and content.
 
