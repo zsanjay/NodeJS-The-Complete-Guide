@@ -153,15 +153,21 @@ app.use((err, req, res, next) => {
 
 🌐 Tech Stack
 
-Node.js
-Express.js
-MongoDB & Mongoose
-Socket.io
-Stripe API
-GraphQL
-Templating Engines: Pug, EJS, Handlebars
-Authentication: Sessions, Cookies, JWT & bcrypt
-Deployment: Heroku / Render / Vercel
+<ul>
+  <li>Node.js</li>
+  <li>Express.js</li>
+  <li>SQL & Sequelize</li>
+  <li>MongoDB & Mongoose</li>
+  <li>MVC</li>
+  <li>Socket.io</li>
+  <li>Stripe API</li>
+  <li>GraphQL</li>
+  <li>Templating Engines: Pug, EJS, Handlebars</li>
+  <li>Authentication: Sessions, Cookies, JWT & bcrypt</li>
+  <li>Deployment: Heroku / Render / Vercel</li>
+  <li>ES6 Features</li>
+  <li>Typescript</li>
+</ul>
 
 ---
 
